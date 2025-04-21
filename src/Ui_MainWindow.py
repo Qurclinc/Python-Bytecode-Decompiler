@@ -77,6 +77,10 @@ class Ui_MainWindow(object):
         self.decompile_btn.setObjectName("decompile_btn")
         self.verticalLayout.addWidget(self.decompile_btn)
         MainWindow.setCentralWidget(self.centralwidget)
+        self.menuBar = QtWidgets.QMenuBar(MainWindow)
+        self.menuBar.setGeometry(QtCore.QRect(0, 0, 800, 31))
+        self.menuBar.setObjectName("menuBar")
+        MainWindow.setMenuBar(self.menuBar)
 
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)

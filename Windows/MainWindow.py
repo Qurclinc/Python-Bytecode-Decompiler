@@ -2,10 +2,11 @@ import screeninfo
 import os
 import requests
 
-from PyQt5.QtWidgets import QMainWindow, QFileDialog
+from PyQt5.QtWidgets import QMainWindow, QFileDialog, QAction
 from src.Ui_MainWindow import Ui_MainWindow
 from Windows.CriticalWindow import CriticalWindow
 from Windows.SuccessWindow import SuccessWindow
+from Windows.AboutWindow import AboutWindow
 
 class MainWindow(QMainWindow):
 
@@ -24,6 +25,23 @@ class MainWindow(QMainWindow):
         
         self.ui.selectFile_btn.clicked.connect(self.open_file)
         self.ui.decompile_btn.clicked.connect(self.decompile)
+        self.about_action = QAction("О программе", self)
+        self.about_action.triggered.connect(self.show_about)
+        self.ui.menuBar.addAction(self.about_action)
+
+    def show_about(self):
+        about_text = """
+        <center>
+        <h3>PYC-Decompiler</h3>
+        <p>Версия: 1.0</p>
+        <p>Программа для декомпиляции Python .pyc файлов</p>
+        <p><a href="https://github.com/Qurclinc">Автор</a></p>
+        <p>© 2025 Все права защищены</p>
+        </center>
+        """
+        title = "О программе"
+        AboutWindow(title, about_text).exec()
+
 
     def send_file(self):
         try:
@@ -39,8 +57,8 @@ class MainWindow(QMainWindow):
         filepath, _ = QFileDialog.getOpenFileName(self, "Open file", "", "Python Compiled Files (*.pyc)")
         if filepath:
             self.source_file = os.path.abspath(filepath)
-                # self.ui.textspace_edit.setPlainText("\n".join(line.strip() for line in f.readlines()))
-                # self.ui.filename_label.setText(f"Current file: {os.path.basename(self.source_file)}")
+            # self.ui.textspace_edit.setPlainText("\n".join(line.strip() for line in f.readlines()))
+            self.ui.filename_label.setText(f"Current file: {os.path.basename(self.source_file)}")
 
     def get_destination(self):
         filepath, _ = QFileDialog.getSaveFileName(self, "Choose file", "Output/output.py", "Python Files (*.py)")
@@ -61,6 +79,7 @@ class MainWindow(QMainWindow):
             if response.status_code == 200:
                 with open(self.destination_file, "wb") as f:
                     f.write(response.content)
+                    self.ui.filename_label.setText(f"Current file: {os.path.basename(self.destination_file)}")
                     SuccessWindow("Succes", "File decompiled successfully!").exec()
                 with open(self.destination_file, "r") as f:
                     strings = ''.join(line for line in f.readlines()[4:])
